@@ -1,9 +1,9 @@
 .data
-test: .word 0,4,0x7fffffff
+test: .word 0,4,0x40000000
 str1: .string "The reslut of "
 str2: .string " is "
 str3: .string "\n"
-newline: .byte 10  # ASCII?­È?10¥Nªí?¦æ¦r²Å    
+newline: .byte 10  # ASCII 10 is newline     
 .text
 main:
     la a2, test
@@ -17,6 +17,7 @@ loop:
     mv a1, a0
     lw a0, 0(a2)
     jal ra, printResult
+    
     addi a2, a2, 4
     addi t3, t3, -1
     bnez t3,loop
@@ -27,8 +28,8 @@ loop:
 generateBitmask:
     addi sp, sp, -4
     sw ra, 0(sp)
-    #sw a0, 0(sp)
     jal ra, clz
+    
     # return (1 << (32 - leading_zeros)) - 1;
     li t0, 32
     sub t0, t0, a0
