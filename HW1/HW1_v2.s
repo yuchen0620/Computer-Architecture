@@ -13,9 +13,26 @@ loop:
     jal ra, generateBitmask
     
     # Print the result to console
-    mv a1, a0
-    lw a0, 0(a2)
-    jal ra, printResult
+    # t0: input value
+    # t1: bitmask
+    lw t0, 0(a2)
+    mv t1, a0
+               
+    la a0, str1
+    li a7, 4
+    ecall
+    mv a0, t0
+    li a7, 35
+    ecall
+    la a0, str2
+    li a7, 4
+    ecall   
+    mv a0, t1
+    li a7, 35
+    ecall
+    la a0, str3
+    li a7, 4
+    ecall
     
     # Loop control
     addi a2, a2, 4
@@ -39,7 +56,7 @@ generateBitmask:
     addi a0, a0, -1
     lw ra,0(sp)  
     addi sp, sp,4 
-    jr ra
+    ret
     
 clz:
     # x |= (x>>1)
@@ -96,24 +113,3 @@ clz:
     sub a0, t0, a0
     ret
     
-# a0: input value
-# a1: bitmask
-printResult:
-    mv t0, a0
-    mv t1, a1   
-    la a0, str1
-    li a7, 4
-    ecall
-    mv a0, t0
-    li a7, 35
-    ecall
-    la a0, str2
-    li a7, 4
-    ecall   
-    mv a0, t1
-    li a7, 35
-    ecall
-    la a0, str3
-    li a7, 4
-    ecall
-    ret

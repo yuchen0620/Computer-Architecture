@@ -6,41 +6,50 @@ str3: .string "\n"
 .text
 main:
     la a2, test
-    li t3, 3
-
-loop:
     lw a0, 0(a2)
     jal ra, generateBitmask
-    
-    # Print the result to console
-    mv a1, a0
-    lw a0, 0(a2)
-    jal ra, printResult
-    
-    # Loop control
-    addi a2, a2, 4
-    addi t3, t3, -1
-    bnez t3,loop
+    lw a0, 4(a2)
+    jal ra, generateBitmask
+    lw a0, 8(a2)
+    jal ra, generateBitmask
     
     # Exit program
     li a7, 10
-    ecall
+    ecall   
     
 generateBitmask:
-    addi sp, sp, -4
-    sw ra, 0(sp)
-    jal ra, clz
-    
+    mv s0, ra
+    mv a1, a0 #store input value
+    jal ra, clz 
+      
     # return (1 << (32 - leading_zeros)) - 1;
     li t0, 32
     sub t0, t0, a0
     li t1, 1
     sll a0, t1, t0
     addi a0, a0, -1
-    lw ra,0(sp)  
-    addi sp, sp,4 
-    jr ra
     
+    # Print the result to console
+    # a1: input value
+    # t1: bitmask
+    mv t1, a0              
+    la a0, str1
+    li a7, 4
+    ecall
+    mv a0, a1
+    li a7, 35
+    ecall
+    la a0, str2
+    li a7, 4
+    ecall   
+    mv a0, t1
+    li a7, 35
+    ecall
+    la a0, str3
+    li a7, 4
+    ecall
+    jalr x0, s0, 0
+        
 clz:
     # x |= (x>>1)
     srli t0, a0, 1
@@ -96,24 +105,3 @@ clz:
     sub a0, t0, a0
     ret
     
-# a0: input value
-# a1: bitmask
-printResult:
-    mv t0, a0
-    mv t1, a1   
-    la a0, str1
-    li a7, 4
-    ecall
-    mv a0, t0
-    li a7, 35
-    ecall
-    la a0, str2
-    li a7, 4
-    ecall   
-    mv a0, t1
-    li a7, 35
-    ecall
-    la a0, str3
-    li a7, 4
-    ecall
-    ret
