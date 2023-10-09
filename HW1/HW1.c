@@ -18,16 +18,17 @@ uint16_t count_leading_zeros(uint32_t x)
     return (32 - (x & 0x3f));
 }
 
-uint32_t generate_bitmask(uint32_t max_value)
+uint32_t generate_bitmask(uint32_t x)
 {
-    uint16_t leading_zeros = count_leading_zeros(max_value);
-    return (1 << (32 - leading_zeros)) - 1;
+    uint32_t leading_zeros = count_leading_zeros(x);
+    if (leading_zeros==0) return 0xffffffff;
+    return (1 << (32 - leading_zeros)) - 1 ;
 }
 int main()
 {   
-    uint32_t test_data[] = {0, 4, 0x40000000};
+    uint32_t test_data[] = {0, 4, 0x80000000};
     for (int i = 0; i < 3; i++){
-        printf("The reslut of %d is %d\n", test_data[i],generate_bitmask(test_data[i]));
+        printf("The reslut of %x is %x\n", test_data[i],generate_bitmask(test_data[i]));
     }
 }
 
