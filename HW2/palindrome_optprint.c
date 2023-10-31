@@ -70,27 +70,19 @@ bool palindrome_detected(uint64_t x){
 
 
 int main(){
-    
+    ticks t0 = getticks();
     uint64_t testA = 0x0000000000000000; 
     uint64_t testB = 0x0000000000000001; 
     uint64_t testC = 0x00000C0000000003; 
     uint64_t testD = 0x0F000000000000F0; 
-    ticks t0 = getticks();   
-    palindrome_detected(testA);
+    
+    printf("%d",palindrome_detected(testA));    
+    printf("%d",palindrome_detected(testB));
+    printf("%d",palindrome_detected(testC));
+    printf("%d",palindrome_detected(testD));
+    
     ticks t1 = getticks();
-    printf("elapsed cycle: %llu" PRIu64 "\n", t1 - t0);   
-    t0 = getticks();   
-    palindrome_detected(testB);
-    t1 = getticks();
-    printf("elapsed cycle: %llu" PRIu64 "\n", t1 - t0);
-    t0 = getticks();   
-    palindrome_detected(testC);
-    t1 = getticks();
-    printf("elapsed cycle: %llu" PRIu64 "\n", t1 - t0);
-    t0 = getticks();   
-    palindrome_detected(testD);
-    t1 = getticks();
-    printf("elapsed cycle: %llu" PRIu64 "\n", t1 - t0);
-          
+    printf("elapsed cycle: %" PRIu64 "\n", t1 - t0);
+     
     return 0;
 }
