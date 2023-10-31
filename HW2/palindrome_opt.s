@@ -36,26 +36,23 @@ palindrome_detected:
     addi sp, sp, -4 
     sw ra, 0(sp)
     jal ra count_leading_zeros
-    mv t0, a0
-    mv t1, a1
     li t4, 64
     
     sub a2, t4, s0 # a2 = nob = 64 - clz; 
     andi t5, a2, 1  # t5 = checkEven
     srli t4, a2, 1  # t4 = nob >> 1 
-    srl t3, t1, t4  # x >> (nob >> 1) (right-half)
+    srl t3, a1, t4  # x >> (nob >> 1) (right-half)
     li t6 32
     sub t2, t6 t4 # (32 - nob>>1)
-    sll t2, t0, t2 # x >> (nob >> 1) (left-half)
+    sll t2, a0, t2 # x >> (nob >> 1) (left-half)
     or t3, t3, t2 # tempX =  x >> (nob >> 1)
     srl t3, t3 , t5  # t3 = tempX
 
     add t4, t4, t5  # leftShiftNum = (nob>>1) + checkEven 
     add t4, t4, s0  # leftShiftNum += clz
     addi t4, t4, -32
-    addi t5, t1, 0
     beq t4,t6, leftShiftNum_equal_32
-    sll t2, t1 ,t4 # tempY = (x << leftShiftNum) (left-half);
+    sll t2, a1 ,t4 # tempY = (x << leftShiftNum) (left-half);
     srl t5, t2, t4 # tempY = (tempY >> leftShiftNum);
     leftShiftNum_equal_32:
     
@@ -71,30 +68,23 @@ palindrome_detected:
         j reverse_loop  
                
     return: 
-        beq t2,t5, same # revTempX == tempY
-        li a0 0
-        lw ra, 0(sp)
-        addi sp sp 4
-        jr ra
-    same:
-        li a0 1    
+        xor a0, t2, t5 
+        seqz a0, a0  
         lw ra, 0(sp)
         addi sp sp 4
         jr ra
         
 count_leading_zeros:
-    
-    mv t1, a1 # t1 = low 32bits
-    mv t0, a0 # t0 = high 32bits
+
 
 
     # x |= (x >> 1);
-    slli t2, t0, 31 # high 32bits shift left 31
-    srli t3, t1, 1 # low 32bits shift right 1
+    slli t2, a0, 31 # high 32bits shift left 31
+    srli t3, a1, 1 # low 32bits shift right 1
     or t3, t2, t3
-    srli t2, t0, 1 # high 32bits shift right 1
-    or t0, t0, t2
-    or t1, t1, t3
+    srli t2, a0, 1 # high 32bits shift right 1
+    or t0, a0, t2
+    or t1, a1, t3
     
     # x |= (x >> 2);
     slli t2, t0, 30
@@ -194,10 +184,9 @@ count_leading_zeros:
     add t0, t0, t2
     add t0, t0, t5
     
-    # x += (x >> 32)
-    mv t2, t0
-    add t1, t1, t2
-    sltu t5, t1, t2
+    # x += (x >> 32)   
+    add t1, t1, t0
+    sltu t5, t1, t0
     add t0, t0, t5
     
     # return (64 - (x & 0x7f))
